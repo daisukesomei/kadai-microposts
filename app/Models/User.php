@@ -110,6 +110,7 @@ class User extends Authenticatable
         return Micropost::whereIn('user_id', $userIds);
     }
     
+    
     //このユーザーがお気に入り中のマイクロポスト
     public function favorites() {
         return $this->belongsToMany(Micropost::class, 'favorites', 'user_id', 'micropost_id')->withTimestamps();
@@ -122,10 +123,10 @@ class User extends Authenticatable
     
     //$userIdで指定されたマイクロポストをお気に入りする
     public function favorite(int $micropostId) {
-        $exist = $this->is_favorite($micropostId);
-        $its_me = $this->id == $micropostId;
+        $exist = $this->is_favorite($micropostId);  //マイクロポストのidが存在すればtrue（以下if文ですでにお気に入りしている為falseになる）
+        // $its_me = $this->id == $micropostId;     //自分のidとマイクロポストのidを比較する必要が無い為、不要（間違い）
         
-        if($exist || $its_me) {
+        if($exist) {
             return false;
         } else {
             $this->favorites()->attach($micropostId);
@@ -135,11 +136,10 @@ class User extends Authenticatable
     
     //$userIdで指定されたマイクロポストのお気に入りを外す。
     public function unfavorite(int $micropostId) {
-        $exist = $this->is_favorite($micropostId);
+        $exist = $this->is_favorite($micropostId);  //マイクロポストのidが存在すればtrue(すでにお気に入りに)
+        //$its_me = $this->id == $micropostId;      //自分のidとマイクロポストのidを比較する必要が無い為、不要（間違い）
         
-        $its_me = $this->id == $micropostId;
-        
-        if($exist && !$its_me) {
+        if($exist) {
             $this->favorites()->detach($micropostId);
             return true;
         }else{
