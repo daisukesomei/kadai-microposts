@@ -19,7 +19,9 @@
                         {{--投稿内容--}}
                         <p class="mb-0">{!! nl2br(e($micropost->content)) !!}</p>
                     </div>
-                    <div>
+                    <div class="flex">
+                        {{-- フォロー/アンフォローボタン --}}
+                        @include('favorite.favorite_button')
                         @if (Auth::id() == $micropost->user_id)
                             {{--投稿削除ボタンのフォーム--}}
                             <form method="POST" action="{{ route('microposts.destroy', $micropost->id) }}">

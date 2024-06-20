@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\User;
+use App\Models\Micropost;
 
 class UsersController extends Controller
 {
@@ -23,12 +24,10 @@ class UsersController extends Controller
     public function show(int $id){
         // idの値でユーザーを検索して取得
         $user = User::findOrFail($id);
-        
         //関係するモデルの件数をロード
         $user->loadRelationshipCounts();
         
         $microposts = $user->microposts()->orderBy('created_at', 'desc')->paginate(5);
-        
 
         // ユーザー詳細ビューでそれを表示
         return view('users.show', [
@@ -47,7 +46,7 @@ class UsersController extends Controller
     {
         // idの値でユーザーを検索して取得
         $user = User::findOrFail($id);
-
+        
         // 関係するモデルの件数をロード
         $user->loadRelationshipCounts();
 
@@ -83,5 +82,21 @@ class UsersController extends Controller
             'user' => $user,
             'users' => $followers,
         ]);
+    }
+    
+    //ユーザーが追加したお気に入りを一覧表示するページを表示するアクション
+    public function favorites($id) {
+        //idの値でユーザーを検索して取得
+        $user = User::findOrFail($id);
+        
+        
+        //関係するモデルの件数をロード
+        $user->loadRelationshipCounts();
+
+        //ユーザーのお気に入り一覧を取得
+        $favorites = $user->favorites()->paginate(10);
+        
+        //お気に入り一覧ビューで上記を表示
+        return view('users.favorites', ['user' => $user, 'microposts' => $favorites]);
     }
 }

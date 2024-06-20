@@ -15,4 +15,9 @@ class Micropost extends Model
     public function user(){
         return $this->belongsTo(User::class);  //belongsToメソッドで一対多を定義するため使用。User::classは関連するモデルクラスを指定。
     }
+    
+    //このマイクロポストをお気に入り中のユーザー（多対多）
+    public function favorite_users(){
+        return $this->belongsTomany(User::class, 'favorites', 'micropost_id', 'user_id')->withTimestamps();
+    }
 }

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Micropost;
+
 
 class MicropostsController extends Controller
 {
@@ -38,17 +40,20 @@ class MicropostsController extends Controller
     }
     
     //投稿削除のアクション
-    public function destroy(string $id){
-        //idの値で投稿を検索して取得
+    public function destroy(string $id)
+    {
+        // idの値で投稿を検索して取得
         $micropost = Micropost::findOrFail($id);
         
-        //認証済みユーザー（閲覧者)がその投稿の所有者である場合は投稿を削除
-        if (\Auth::id() === $micropost->user_id ) {
+        // 認証済みユーザー（閲覧者）がその投稿の所有者である場合は投稿を削除
+        if (\Auth::id() === $micropost->user_id) {
             $micropost->delete();
-            return back()->with('success', 'Delete Successful');
+            return back()
+                ->with('success','Delete Successful');
         }
-        
-        //前のURLへリダイレクトさせる
-        return back()->with('Delete Failed');
+
+        // 前のURLへリダイレクトさせる
+        return back()
+            ->with('Delete Failed');
     }
 }

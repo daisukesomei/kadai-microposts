@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController; // 追記
 use App\Http\Controllers\MicropostsController; // 追記
 use App\Http\Controllers\UserFollowController; // 追記
+use App\Http\Controllers\FavoritesController; // 追記
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +28,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('unfollow', [UserFollowController::class, 'destroy'])->name('user.unfollow');
         Route::get('followings', [UsersController::class, 'followings'])->name('users.followings');
         Route::get('followers', [UsersController::class, 'followers'])->name('users.followers');
+        Route::get('favorites', [UsersController::class, 'favorites'])->name('users.favorites');    //お気に入りしたのマイクロポストを表示するルート追記
     });
     
     Route::resource('users', UsersController::class, ['only' => ['index', 'show']]);
@@ -34,6 +36,13 @@ Route::middleware('auth')->group(function () {
     // Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     // Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('microposts', MicropostsController::class, ['only' => ['store', 'destroy']]);
+
+    //お気に入りの登録と削除を行うルート設定
+    Route::prefix('microposts/{id}')->group(function() {
+       Route::post('favorites', [FavoritesController::class, 'store'])->name('favorites.favorite');
+       Route::delete('unfavorite', [FavoritesController::class, 'destroy'])->name('favorites.unfavorite');
+    });
+    
 });
 
 require __DIR__.'/auth.php';
